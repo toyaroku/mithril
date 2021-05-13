@@ -1,6 +1,6 @@
 package collections.ints;
 
-import iterators.IntIterator;
+import iterators.Iterator;
 
 public interface List<L extends List<L>> {
 
@@ -14,9 +14,9 @@ public interface List<L extends List<L>> {
 
     int get(int index);
 
-    IntIterator forwards();
+    Iterator forwards();
 
-    IntIterator backwards();
+    Iterator backwards();
 
     int firstIndexOf(int element);
 

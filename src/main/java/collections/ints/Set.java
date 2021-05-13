@@ -1,6 +1,6 @@
 package collections.ints;
 
-import iterators.IntIterator;
+import iterators.Iterator;
 
 public interface Set<S extends Set<S>> {
 
@@ -16,9 +16,9 @@ public interface Set<S extends Set<S>> {
 
     int greater(int element);
 
-    IntIterator increasing();
+    Iterator increasing();
 
-    IntIterator decreasing();
+    Iterator decreasing();
 
     boolean contains(int element);
 
