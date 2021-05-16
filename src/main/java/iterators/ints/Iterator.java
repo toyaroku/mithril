@@ -1,4 +1,4 @@
-package iterators;
+package iterators.ints;
 
 public interface Iterator {
 

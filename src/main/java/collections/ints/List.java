@@ -1,6 +1,6 @@
 package collections.ints;
 
-import iterators.Iterator;
+import iterators.ints.Iterator;
 
 public interface List<L extends List<L>> {
 
