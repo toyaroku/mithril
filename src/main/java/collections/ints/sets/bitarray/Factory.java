@@ -1,6 +1,5 @@
 package collections.ints.sets.bitarray;
 
-import util.BitUtil;
 import util.MaskedBinarySearch;
 
 public class Factory {
