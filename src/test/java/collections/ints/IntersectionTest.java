@@ -1634,14 +1634,14 @@ public class IntersectionTest {
     private static void assertIntersection(TestCase testCase) {
         int[] operand1 = testCase.getOperand1();
         int[] operand2 = testCase.getOperand2();
-        int[] expectedUnion = inferIntersection(operand1, operand2);
-        assertIntersection(operand1, operand2, expectedUnion);
+        int[] expectedIntersection = inferIntersection(operand1, operand2);
+        assertIntersection(operand1, operand2, expectedIntersection);
     }
 
-    private static void assertIntersection(int[] op1, int[] op2, int[] expectedUnion) {
-        Statement union = Assertion.assertThat(op1).intersection(op2).equals(expectedUnion);
-        Statement inverted = Assertion.assertThat(op2).intersection(op1).equals(expectedUnion);
-        MultiSetTester.forAllSets(union, inverted);
+    private static void assertIntersection(int[] op1, int[] op2, int[] expectedIntersection) {
+        Statement intersection = Assertion.assertThat(op1).intersection(op2).equals(expectedIntersection);
+        Statement inverted = Assertion.assertThat(op2).intersection(op1).equals(expectedIntersection);
+        MultiSetTester.forAllSets(intersection, inverted);
     }
 
     private static int[] inferIntersection(int[] set1, int[] set2) {

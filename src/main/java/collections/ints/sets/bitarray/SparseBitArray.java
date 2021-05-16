@@ -11,7 +11,7 @@ import static collections.Collections.noSuchElement;
 
 public class SparseBitArray implements Set<SparseBitArray> {
 
-    private final BitSetWithMetaDataCalculator config;
+    private final IntegerBitSetWithMetaData config;
     private final MaskedBinarySearch indexer;
 
     private final int wordsInUse;
@@ -19,7 +19,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
     private final int highestAddress;
     private final long[] words;
 
-    SparseBitArray(BitSetWithMetaDataCalculator config, MaskedBinarySearch indexer, long[] words, int wordsInUse) {
+    SparseBitArray(IntegerBitSetWithMetaData config, MaskedBinarySearch indexer, long[] words, int wordsInUse) {
         this.config = config;
         this.indexer = indexer;
 
@@ -80,7 +80,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
     }
 
     private int calculateElement(int address, int bitIndex) {
-        return config.calculateMaxCardinalityF(address) + bitIndex;
+        return config.calculateMaxCardinality(address) + bitIndex;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
                 }
                 maybeIndex--;
             } else {
-                return config.calculateMaxCardinalityF(address) + previousIndex;
+                return config.calculateMaxCardinality(address) + previousIndex;
             }
         } else {
             maybeIndex = -maybeIndex - 2;
@@ -117,7 +117,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
         long word =  words[maybeIndex];
         int actualAddress = config.extractMetaData(word);
         long bitSet = config.extractBitSet(word);
-        return config.calculateMaxCardinalityF(actualAddress) + BitUtil.lastBit(bitSet);
+        return config.calculateMaxCardinality(actualAddress) + BitUtil.lastBit(bitSet);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
                 }
                 maybeIndex++;
             } else {
-                return config.calculateMaxCardinalityF(address) + nextIndex;
+                return config.calculateMaxCardinality(address) + nextIndex;
             }
         } else {
             maybeIndex = -maybeIndex - 1;
@@ -151,7 +151,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
         long word = words[maybeIndex];
         long bitSet = config.extractBitSet(word);
         int actualAddress = config.extractMetaData(word);
-        return config.calculateMaxCardinalityF(actualAddress) + BitUtil.firstBit(bitSet);
+        return config.calculateMaxCardinality(actualAddress) + BitUtil.firstBit(bitSet);
     }
 
     @Override
@@ -175,9 +175,9 @@ public class SparseBitArray implements Set<SparseBitArray> {
         if (noSuchElement(wordIndex)) {
             return false;
         }
-        long word = words[wordIndex];
+        int bitSet = config .extractBitSet(words[wordIndex]);
         int bitIndex = config.calculateIndexInBitSet(element);
-        return BitUtil.containsBitAtIndex(word, bitIndex);
+        return BitUtil.containsBitAtIndex(bitSet, bitIndex);
     }
 
     @Override

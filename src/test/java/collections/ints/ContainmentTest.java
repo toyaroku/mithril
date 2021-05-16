@@ -145,29 +145,14 @@ public class ContainmentTest {
     }
 
     @Test
-    void randomConstructionTest() {
-        constructionBugCatcher(0L, 10);
-    }
-
-    @Test
     @Disabled("Test can be enabled to find bugs with random data.")
     void constructionBugCatcher() {
-        constructionBugCatcher(new Random().nextLong(), Integer.MAX_VALUE);
+        constructionBugCatcher(new Random().nextLong());
     }
 
-    private void constructionBugCatcher(long seed, int maxIterations) {
-
-        final int maxElement = 1000;
-        final int maxSize = 20;
-
-        for (int i = 0; i < maxIterations; i++) {
-
-            SparseIntGenerator sparseIntGenerator = new SparseIntGenerator(seed, maxElement);
-
-            int[] randomSet = sparseIntGenerator.randomMaxAttempts(maxSize);
-            MultiSetTester.forAllSets(
-                Assertion.assertThat(randomSet).containsExactly(randomSet)
-            );
-        }
+    private void constructionBugCatcher(long seed) {
+        SparseIntGenerator sparseIntGenerator = new SparseIntGenerator(seed, 1000);
+        int[] randomSet = sparseIntGenerator.randomMaxAttempts(20);
+        MultiSetTester.forAllSets(Assertion.assertThat(randomSet).containsExactly(randomSet));
     }
 }

@@ -1434,7 +1434,7 @@ public class DifferenceTest {
 
     @Test
     @Disabled("Test can be enabled and run until failure to find bugs with random data.")
-    void intersectionBugCatcher() {
+    void differenceBugCatcher() {
         Random random = new SecureRandom();
         long randomSeed = random.nextLong();
         int numberOfClusters = random.nextInt(20);

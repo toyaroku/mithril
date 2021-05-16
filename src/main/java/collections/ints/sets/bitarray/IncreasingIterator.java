@@ -7,7 +7,7 @@ import static collections.Collections.noSuchElement;
 
 class IncreasingIterator implements Iterator {
 
-    private final BitSetWithMetaDataCalculator calculator;
+    private final IntegerBitSetWithMetaData calculator;
     private final long[] words;
     private final int wordsInUse;
 
@@ -16,7 +16,7 @@ class IncreasingIterator implements Iterator {
     int currentBitSet;
     int currentBitIndex;
 
-    IncreasingIterator(long[] words, int wordsInUse, BitSetWithMetaDataCalculator calculator) {
+    IncreasingIterator(long[] words, int wordsInUse, IntegerBitSetWithMetaData calculator) {
         this.words = words;
         this.wordsInUse = wordsInUse;
         this.calculator = calculator;
@@ -25,7 +25,7 @@ class IncreasingIterator implements Iterator {
             long word = words[0];
             int address = calculator.extractMetaData(word);
             currentWordIndex = 0;
-            currentOffset = calculator.calculateMaxCardinalityF(address);
+            currentOffset = calculator.calculateMaxCardinality(address);
             currentBitSet = calculator.extractBitSet(word);
             currentBitIndex = BitUtil.firstBit(currentBitSet);
         } else {
@@ -46,7 +46,7 @@ class IncreasingIterator implements Iterator {
             if (currentWordIndex < wordsInUse - 1) {
                 long word = words[++currentWordIndex];
                 int address  = calculator.extractMetaData(word);
-                currentOffset = calculator.calculateMaxCardinalityF(address);
+                currentOffset = calculator.calculateMaxCardinality(address);
                 currentBitSet = calculator.extractBitSet(word);
                 currentBitIndex = BitUtil.firstBit(currentBitSet);
             }

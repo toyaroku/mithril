@@ -5,16 +5,20 @@ import util.MaskedBinarySearch;
 
 public class Factory {
 
-    private final BitSetWithMetaDataCalculator addressCalculator;
+    private final IntegerBitSetWithMetaData addressCalculator;
     private final MaskedBinarySearch wordIndexerByAddress;
 
-    public Factory() {
-        this(new BitSetWithMetaDataCalculator());
-    }
-
-    private Factory(BitSetWithMetaDataCalculator addressCalculator) {
+    private Factory(IntegerBitSetWithMetaData addressCalculator) {
         this.addressCalculator = addressCalculator;
         this.wordIndexerByAddress = addressCalculator.createMetaDataBinarySearch();
+    }
+
+    public static Factory v1() {
+        return new Factory(IntegerBitSetWithMetaData.bitSetLeastSignificant());
+    }
+
+    public static Factory v2() {
+        return new Factory(IntegerBitSetWithMetaData.bitSetMostSignificant());
     }
 
     public SparseBitArray empty() {
@@ -46,12 +50,12 @@ public class Factory {
             int indexInBitSet = addressCalculator.calculateIndexInBitSet(element);
             if (address > lastAddress) {
                 long addressOnly = addressCalculator.withMetaData(0L, address);
-                long word = BitUtil.withBitSetAtIndex(addressOnly, indexInBitSet);
+                long word = addressCalculator.withBitSetAtIndex(addressOnly, indexInBitSet);
                 words[++index] = word;
                 lastAddress = address;
             } else {
                 long word = words[index];
-                words[index] = BitUtil.withBitSetAtIndex(word, indexInBitSet);
+                words[index] = addressCalculator.withBitSetAtIndex(word, indexInBitSet);
             }
         }
         return new SparseBitArray(addressCalculator, wordIndexerByAddress, words, size);

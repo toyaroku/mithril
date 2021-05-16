@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import util.Mappers;
 import util.SimpleBinaryTestCaseGenerator;
+import util.SimpleBinaryTestCaseGenerator.TestCase;
 
 import java.security.SecureRandom;
 import java.util.Random;
@@ -1517,9 +1518,8 @@ public class IntersectsTest {
     @Test
     void testAllPresetCasesWithRandomValues() {
         long randomSeed = new SecureRandom().nextLong();
-        SimpleBinaryTestCaseGenerator.TestCase[] testCases = new SimpleBinaryTestCaseGenerator().generateAllPresets(
-            randomSeed);
-        for (SimpleBinaryTestCaseGenerator.TestCase testCase : testCases) {
+        TestCase[] testCases = new SimpleBinaryTestCaseGenerator().generateAllPresets(randomSeed);
+        for (TestCase testCase : testCases) {
             assertIntersects(testCase);
         }
     }
@@ -1530,12 +1530,11 @@ public class IntersectsTest {
         Random random = new SecureRandom();
         long randomSeed = random.nextLong();
         int numberOfClusters = random.nextInt(20);
-        SimpleBinaryTestCaseGenerator.TestCase testCase = new SimpleBinaryTestCaseGenerator().generateRandomCase(
-            randomSeed, numberOfClusters);
+        TestCase testCase = new SimpleBinaryTestCaseGenerator().generateRandomCase(randomSeed, numberOfClusters);
         assertIntersects(testCase);
     }
 
-    private static void assertIntersects(SimpleBinaryTestCaseGenerator.TestCase testCase) {
+    private static void assertIntersects(TestCase testCase) {
         int[] operand1 = testCase.getOperand1();
         int[] operand2 = testCase.getOperand2();
         boolean expectedIntersects = inferIntersects(operand1, operand2);

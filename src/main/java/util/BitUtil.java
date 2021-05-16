@@ -12,7 +12,15 @@ public class BitUtil {
     private BitUtil() {
     }
 
+    public static int log2Ceil(int word) {
+        return BITS_PER_INT - Integer.numberOfLeadingZeros(word - 1);
+    }
+
     public static boolean containsBitAtIndex(long word, int index) {
+        return (word & (1L << index)) != 0;
+    }
+
+    public static boolean containsBitAtIndex(int word, int index) {
         return (word & (1L << index)) != 0;
     }
 
