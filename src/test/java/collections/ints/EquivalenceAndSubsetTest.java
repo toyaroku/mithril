@@ -1,15 +1,7 @@
 package collections.ints;
 
 import collections.ints.assertions.Assertion;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import util.Mappers;
-import util.SimpleBinaryTestCaseGenerator;
-
-import java.security.SecureRandom;
-import java.util.*;
-
-import static collections.ints.assertions.Assertion.assertThat;
 
 public class EquivalenceAndSubsetTest {
 

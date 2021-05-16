@@ -3,9 +3,6 @@ package collections.ints.sets.bitarray;
 import util.BitUtil;
 import util.MaskedBinarySearch;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 public class Factory {
 
     private final BitSetWithMetaDataCalculator addressCalculator;

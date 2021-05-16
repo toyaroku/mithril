@@ -2,8 +2,6 @@ package collections.ints.assertions;
 
 import collections.ints.Set;
 
-import java.util.Arrays;
-
 public class BinaryProperty {
 
     private final Property property;

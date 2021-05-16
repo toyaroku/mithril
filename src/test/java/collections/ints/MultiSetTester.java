@@ -2,8 +2,6 @@ package collections.ints;
 
 import collections.ints.assertions.Statement;
 
-import javax.swing.plaf.nimbus.State;
-
 public class MultiSetTester {
 
     public static void forAllSets(Statement statement) {

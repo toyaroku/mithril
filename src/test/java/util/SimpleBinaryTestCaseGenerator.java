@@ -8,7 +8,7 @@ import util.SparseIntGenerator.Containment;
 import java.util.Random;
 
 import static util.BitUtil.BITS_PER_INT;
-import static util.SparseIntGenerator.Containment.*;
+import static util.SparseIntGenerator.Containment.values;
 
 public class SimpleBinaryTestCaseGenerator {
 

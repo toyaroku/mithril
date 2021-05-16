@@ -7,7 +7,6 @@ import util.Mappers;
 import util.SimpleBinaryTestCaseGenerator;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.TreeSet;
 
