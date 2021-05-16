@@ -131,8 +131,9 @@ public class ContainmentTest {
 
     private void assertRangeForAllSets(int fromInclusive, int toExclusive) {
         int[] completeSet = new int[toExclusive - fromInclusive];
-        for (int i = 0; i < completeSet.length; i++) {
-            completeSet[1] = fromInclusive + i;
+        int index = 0;
+        for (int i = fromInclusive; i < toExclusive; i++) {
+            completeSet[index++] = i;
         }
         assertConstructionForALlSets(completeSet);
     }

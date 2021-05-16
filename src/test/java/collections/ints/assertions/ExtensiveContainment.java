@@ -21,7 +21,7 @@ public class ExtensiveContainment implements Statement {
         if (!containsExactly(output, expectedResult)) {
             return false;
         }
-        assert extensiveChek(output, setFactory);
+        //assert extensiveChek(output, setFactory);
         return true;
     }
 

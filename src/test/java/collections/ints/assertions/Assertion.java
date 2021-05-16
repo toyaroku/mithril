@@ -1,5 +1,7 @@
 package collections.ints.assertions;
 
+import collections.ints.Set;
+
 public class Assertion {
 
     final int[] subject;
@@ -14,7 +16,12 @@ public class Assertion {
 
     public ExtensiveContainment containsExactly(int... elements) {
         assertSorted(elements);
-        return new ExtensiveContainment(SetFactory::create, elements);
+        return new ExtensiveContainment(new SetOutput() {
+            @Override
+            public <S extends Set<S>> S outputFor(SetFactory<S> setFactory) {
+                return setFactory.create(elements);
+            }
+        }, elements);
     }
 
     private static void assertSorted(int... elements) {

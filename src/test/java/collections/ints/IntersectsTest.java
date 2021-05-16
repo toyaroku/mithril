@@ -1558,7 +1558,7 @@ public class IntersectsTest {
 
     private static void assertDoesNotIntersect(int[] op1, int[] op2) {
         Assertion op1AsSubject = Assertion.assertThat(op1);
-        Assertion op2AsSubject = Assertion.assertThat(op1);
+        Assertion op2AsSubject = Assertion.assertThat(op2);
         MultiSetTester.forAllSets(
             op1AsSubject.doesNotIntersect(op2),
             op2AsSubject.doesNotIntersect(op1)
