@@ -1,9 +1,10 @@
 package collections.ints.sets.bitarray;
 
+import collections.Collections;
 import iterators.ints.Iterator;
 import util.BitUtil;
 
-import static collections.Collections.noSuchElement;
+import static collections.Collections.noSuchInteger;
 
 class DecreasingIterator implements Iterator {
 
@@ -29,20 +30,20 @@ class DecreasingIterator implements Iterator {
             currentBitSet = calculator.extractBitSet(word);
             currentBitIndex = BitUtil.lastBit(currentBitSet);
         } else {
-            currentBitIndex = noSuchElement();
+            currentBitIndex = Collections.noSuchInteger();
         }
     }
 
     @Override
     public boolean hasNext() {
-        return !noSuchElement(currentBitIndex);
+        return !Collections.noSuchInteger(currentBitIndex);
     }
 
     @Override
     public int next() {
         int currentElement = currentOffset + currentBitIndex;
         currentBitIndex = BitUtil.previousSetBitInclusive(currentBitSet, currentBitIndex - 1);
-        if (noSuchElement(currentBitIndex)) {
+        if (Collections.noSuchInteger(currentBitIndex)) {
             if (currentWordIndex > 0) {
                 long word = words[--currentWordIndex];
                 int address  = calculator.extractMetaData(word);

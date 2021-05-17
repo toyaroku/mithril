@@ -1,6 +1,8 @@
 package util;
 
-import static collections.Collections.noSuchElement;
+import collections.Collections;
+
+import static collections.Collections.noSuchInteger;
 
 public class MaskedBinarySearch {
 
@@ -13,12 +15,16 @@ public class MaskedBinarySearch {
     public int indexOf(long[] array, int length, long key) {
         int index = indexOfOrInverseInsertIndex(array, length, key);
         if (index < 0 || index >= length) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         return index;
     }
 
     public int indexOfOrInverseInsertIndex(long[] array, int length, long key) {
+        return indexOfOrInverseInsertIndex(mask, array, length, key);
+    }
+
+    public static int indexOfOrInverseInsertIndex(long mask, long[] array, int length, long key) {
 
         long actualKey = key & mask;
 
@@ -40,5 +46,4 @@ public class MaskedBinarySearch {
 
         return -(low + 1);
     }
-
 }

@@ -2,13 +2,22 @@ package collections;
 
 public final class Collections {
 
-    private static final int NO_SUCH_ELEMENT = -1;
+    private static final int NO_SUCH_ELEMENT_INT = -1;
+    private static final long NO_SUCH_ELEMENT_LONG = -1;
 
-    public static int noSuchElement() {
-        return NO_SUCH_ELEMENT;
+    public static int noSuchInteger() {
+        return NO_SUCH_ELEMENT_INT;
     }
 
-    public static boolean noSuchElement(int index) {
-        return index == NO_SUCH_ELEMENT;
+    public static long noSuchLong() {
+        return NO_SUCH_ELEMENT_LONG;
+    }
+
+    public static boolean noSuchInteger(int index) {
+        return index == NO_SUCH_ELEMENT_INT;
+    }
+
+    public static boolean noSuchLong(long element) {
+        return element == NO_SUCH_ELEMENT_LONG;
     }
 }

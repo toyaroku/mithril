@@ -1,8 +1,10 @@
 package util;
 
+import collections.Collections;
+
 import java.util.Arrays;
 
-import static collections.Collections.noSuchElement;
+import static collections.Collections.noSuchInteger;
 
 public class BitUtil {
 
@@ -34,7 +36,7 @@ public class BitUtil {
 
     public static int lastBit(long word) {
         if (word == 0) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         int previousIndexFromEnd = Long.numberOfLeadingZeros(word) + 1;
         return BITS_PER_LONG - previousIndexFromEnd;
@@ -42,7 +44,7 @@ public class BitUtil {
 
     public static int lastBit(int word) {
         if (word == 0) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         int previousIndexFromEnd = Integer.numberOfLeadingZeros(word) + 1;
         return BITS_PER_INT - previousIndexFromEnd;
@@ -50,60 +52,60 @@ public class BitUtil {
 
     public static int firstBit(long word) {
         if (word == 0) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         return Long.numberOfTrailingZeros(word);
     }
 
     public static int firstBit(int word) {
         if (word == 0) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         return Integer.numberOfTrailingZeros(word);
     }
 
     public static int previousSetBitInclusive(long word, int index) {
         if (index < 0) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         long smallerPart = word & (-1L >>> -(index + 1));
         if (smallerPart == 0L) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         return lastBit(smallerPart);
     }
 
     public static int previousSetBitInclusive(int word, int index) {
         if (index < 0) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         int smallerPart = word & (-1 >>> -(index + 1));
         if (smallerPart == 0L) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         return lastBit(smallerPart);
     }
 
     public static int nextSetBitInclusive(long word, int index) {
         if (index >= BITS_PER_LONG) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         long greaterPart = word & (-1L << index);
         int firstSetBitIndex = firstBit(greaterPart);
         if (firstSetBitIndex >= BITS_PER_LONG) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         return firstSetBitIndex;
     }
 
     public static int nextSetBitInclusive(int word, int index) {
         if (index > BITS_PER_INT - 1) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         int greaterPart = word & (-1 << index);
         int firstSetBitIndex = firstBit(greaterPart);
         if (firstSetBitIndex >= BITS_PER_INT) {
-            return noSuchElement();
+            return Collections.noSuchInteger();
         }
         return firstSetBitIndex;
     }
