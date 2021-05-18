@@ -7,4 +7,7 @@ public interface MutableMap extends Map {
     void remove(long domainElement);
 
     void update(long domainElement, long newCodomainElement, Update update);
+
+    @Override
+    MutableMap copy();
 }

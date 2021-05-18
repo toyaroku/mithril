@@ -1,6 +1,8 @@
 package collections.ints;
 
 import collections.ints.assertions.Assertion;
+import collections.longs.datastructures.EntryCompressor;
+import collections.longs.datastructures.arrays.CompressedBitSet;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import util.SparseIntGenerator;

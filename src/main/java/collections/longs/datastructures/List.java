@@ -11,4 +11,8 @@ public interface List {
     int find(long element);
 
     Iterator elements();
+
+    List copy();
+
+    MutableList mutableCopy();
 }

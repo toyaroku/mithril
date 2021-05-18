@@ -11,4 +11,7 @@ public interface MutableList extends List {
     void swap(int index1, int index2);
 
     long update(int index, long value, Update update);
+
+    @Override
+    MutableList copy();
 }

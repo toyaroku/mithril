@@ -1,15 +1,12 @@
 package collections.longs.datastructures.arrays;
 
-import collections.longs.datastructures.Iterator;
-import collections.longs.datastructures.MutableSet;
-import collections.longs.datastructures.SortedSet;
-import collections.longs.datastructures.Sorting;
+import collections.longs.datastructures.*;
 
-public class SortedArraySet implements SortedSet, MutableSet {
+public class SortedArraySet implements SortedSet {
 
-    private final ResizableArray array;
+    private final ResizableArray.Mutable array;
 
-    private SortedArraySet(ResizableArray array) {
+    private SortedArraySet(ResizableArray.Mutable array) {
         this.array = array;
     }
 
@@ -20,22 +17,6 @@ public class SortedArraySet implements SortedSet, MutableSet {
     public static SortedArraySet of(long... elements) {
         int length = Array.sortUnique(elements, elements.length);
         return new SortedArraySet(ResizableArray.of(elements, length));
-    }
-
-    @Override
-    public void add(long element) {
-        int index = array.find(element);
-        if (!Sorting.isPresent(index)) {
-            array.insert(element, Sorting.asInsertIndex(index));
-        }
-    }
-
-    @Override
-    public void remove(long element) {
-        int index = array.find(element);
-        if (Sorting.isPresent(index)) {
-            array.remove(index);
-        }
     }
 
     @Override
@@ -60,6 +41,16 @@ public class SortedArraySet implements SortedSet, MutableSet {
     }
 
     @Override
+    public SortedArraySet copy() {
+        return new SortedArraySet(array.mutableCopy());
+    }
+
+    @Override
+    public SortedArraySet.Mutable mutableCopy() {
+        return copy().asMutable();
+    }
+
+    @Override
     public long smallest() {
         return array.first();
     }
@@ -77,5 +68,32 @@ public class SortedArraySet implements SortedSet, MutableSet {
     @Override
     public Iterator descending() {
         return array.byDecreasingIndex();
+    }
+
+    private Mutable asMutable() {
+        return new Mutable(array);
+    }
+
+    public class Mutable extends SortedArraySet implements MutableSet {
+
+        private Mutable(ResizableArray.Mutable array) {
+            super(array);
+        }
+
+        @Override
+        public void add(long element) {
+            int index = array.find(element);
+            if (!Sorting.isPresent(index)) {
+                array.insert(element, Sorting.asInsertIndex(index));
+            }
+        }
+
+        @Override
+        public void remove(long element) {
+            int index = array.find(element);
+            if (Sorting.isPresent(index)) {
+                array.remove(index);
+            }
+        }
     }
 }

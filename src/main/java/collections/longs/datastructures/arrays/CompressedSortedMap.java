@@ -4,14 +4,28 @@ import collections.longs.datastructures.*;
 
 import static collections.Collections.noSuchLong;
 
-class CompressedSortedMap implements MutableSortedMap {
+class CompressedSortedMap implements SortedMap {
 
     private final EntryCompressor compressor;
-    private final SortedResizableArray array;
+    private final SortedResizableArray.Mutable array;
 
     CompressedSortedMap(EntryCompressor compressor) {
         this.array = SortedResizableArray.empty();
         this.compressor = compressor;
+    }
+
+    private CompressedSortedMap(SortedResizableArray.Mutable array, EntryCompressor compressor) {
+        this.array = array;
+        this.compressor = compressor;
+    }
+
+    private CompressedSortedMap(CompressedSortedMap original) {
+        this.array = original.array.copy();
+        this.compressor = original.compressor;
+    }
+
+    public static Mutable empty(EntryCompressor compressor) {
+        return new CompressedSortedMap(compressor).asMutable();
     }
 
     @Override
@@ -57,41 +71,6 @@ class CompressedSortedMap implements MutableSortedMap {
     public EntryIterator definition() {
         return ascending();
     }
-
-    @Override
-    public void define(long key, long value) {
-        int index = findArrayIndex(key);
-        long entry = compressor.create(key, value);
-        if (Sorting.isPresent(index)) {
-            array.update(index, entry, Updates.replace());
-        } else {
-            array.add(entry);
-        }
-    }
-
-    @Override
-    public void remove(long key) {
-        int index = findArrayIndex(key);
-        if (Sorting.isPresent(index)) {
-            array.remove(index);
-        }
-    }
-
-    @Override
-    public void update(long key, long newValue, Update update) {
-        int index = findArrayIndex(key);
-        if (Sorting.isPresent(index)) {
-            long originalEntry = array.get(index);
-            long originalValue = compressor.value(originalEntry);
-            long updatedValue = update.apply(originalValue, newValue);
-            long updatedEntry = compressor.create(key, updatedValue);
-            array.update(index, updatedEntry, Updates.replace());
-        } else {
-            long newEntry = compressor.create(key, newValue);
-            array.insert(newEntry, Sorting.asInsertIndex(index));
-        }
-    }
-
 
     private int findArrayIndex(long key) {
         long keyEntry = compressor.keyEntry(key);
@@ -145,6 +124,61 @@ class CompressedSortedMap implements MutableSortedMap {
     @Override
     public EntryIterator descending() {
         return new It(array.descending());
+    }
+
+    @Override
+    public CompressedSortedMap copy() {
+        return new CompressedSortedMap(this);
+    }
+
+    @Override
+    public Mutable mutableCopy() {
+        return copy().asMutable();
+    }
+
+    private Mutable asMutable() {
+        return new Mutable(array, compressor);
+    }
+
+    public class Mutable extends CompressedSortedMap implements MutableSortedMap {
+
+        private Mutable(SortedResizableArray.Mutable array, EntryCompressor compressor) {
+            super(array, compressor);
+        }
+
+        @Override
+        public void define(long key, long value) {
+            int index = findArrayIndex(key);
+            long entry = compressor.create(key, value);
+            if (Sorting.isPresent(index)) {
+                array.update(index, entry, Updates.replace());
+            } else {
+                array.add(entry);
+            }
+        }
+
+        @Override
+        public void remove(long key) {
+            int index = findArrayIndex(key);
+            if (Sorting.isPresent(index)) {
+                array.remove(index);
+            }
+        }
+
+        @Override
+        public void update(long key, long newValue, Update update) {
+            int index = findArrayIndex(key);
+            if (Sorting.isPresent(index)) {
+                long originalEntry = array.get(index);
+                long originalValue = compressor.value(originalEntry);
+                long updatedValue = update.apply(originalValue, newValue);
+                long updatedEntry = compressor.create(key, updatedValue);
+                array.update(index, updatedEntry, Updates.replace());
+            } else {
+                long newEntry = compressor.create(key, newValue);
+                array.insert(newEntry, Sorting.asInsertIndex(index));
+            }
+        }
     }
 
     private class It implements EntryIterator {

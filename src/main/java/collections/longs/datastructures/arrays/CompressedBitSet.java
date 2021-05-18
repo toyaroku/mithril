@@ -7,14 +7,24 @@ import static collections.Collections.noSuchInt;
 import static collections.Collections.noSuchLong;
 import static util.BitUtil.BITS_PER_LONG;
 
-public class CompressedBitSet implements MutableBitSet {
+public class CompressedBitSet implements BitSet {
 
-    private final CompressedSortedMap bitSets;
+    private final CompressedSortedMap.Mutable bitSets;
     private final EntryCompressor compressor;
     private final int bitSetSize;
 
+    private CompressedBitSet(CompressedSortedMap.Mutable bitSets, EntryCompressor compressor, int bitSetSize) {
+        this.bitSets = bitSets;
+        this.compressor = compressor;
+        this.bitSetSize = bitSetSize;
+    }
+
+    private CompressedBitSet(CompressedBitSet original) {
+        this(original.bitSets.mutableCopy(), original.compressor, original.bitSetSize);
+    }
+
     public CompressedBitSet(EntryCompressor compressor) {
-        this.bitSets = new CompressedSortedMap(compressor);
+        this.bitSets = CompressedSortedMap.empty(compressor);
         this.compressor = compressor;
         this.bitSetSize = compressor.getValueBits();
     }
@@ -77,17 +87,13 @@ public class CompressedBitSet implements MutableBitSet {
     }
 
     @Override
-    public void add(long element) {
-        long bitSetIndex = calculateBitSetIndex(element);
-        long indexInBitSet = calculateIndexInBitset(element);
-        long singleton = createBitSetSingleton(indexInBitSet);
-        bitSets.update(bitSetIndex, singleton, Updates.logicalOr());
+    public CompressedBitSet copy() {
+        return new CompressedBitSet(this);
     }
 
     @Override
-    public void remove(long element) {
-        long bitSetIndex = calculateBitSetIndex(element);
-        bitSets.remove(bitSetIndex);
+    public CompressedBitSet.Mutable mutableCopy() {
+        return copy().asMutable();
     }
 
     @Override
@@ -216,8 +222,13 @@ public class CompressedBitSet implements MutableBitSet {
         }
 
         @Override
-        public long getOffset() {
-            return calculateOffset(entryIterator.key());
+        public long getSmallestPossibleValue() {
+            return currentOffset;
+        }
+
+        @Override
+        public int getBitSetSize() {
+            return bitSetSize;
         }
 
         @Override
@@ -237,6 +248,31 @@ public class CompressedBitSet implements MutableBitSet {
                 }
             }
             return currentElement();
+        }
+    }
+
+    private Mutable asMutable() {
+        return new Mutable(bitSets, compressor, bitSetSize);
+    }
+
+    public class Mutable extends CompressedBitSet implements MutableBitSet {
+
+        private Mutable(CompressedSortedMap.Mutable bitSets, EntryCompressor compressor, int bitSetSize) {
+            super(bitSets, compressor, bitSetSize);
+        }
+
+        @Override
+        public void add(long element) {
+            long bitSetIndex = calculateBitSetIndex(element);
+            long indexInBitSet = calculateIndexInBitset(element);
+            long singleton = createBitSetSingleton(indexInBitSet);
+            bitSets.update(bitSetIndex, singleton, Updates.logicalOr());
+        }
+
+        @Override
+        public void remove(long element) {
+            long bitSetIndex = calculateBitSetIndex(element);
+            bitSets.remove(bitSetIndex);
         }
     }
 

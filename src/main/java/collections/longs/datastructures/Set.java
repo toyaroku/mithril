@@ -9,4 +9,8 @@ public interface Set {
     boolean contains(long element);
 
     Iterator elements();
+
+    Set copy();
+
+    MutableSet mutableCopy();
 }

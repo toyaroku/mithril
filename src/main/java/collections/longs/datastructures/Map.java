@@ -14,6 +14,10 @@ public interface Map {
 
     EntryIterator definition();
 
+    Map copy();
+
+    MutableMap mutableCopy();
+
     interface EntryIterator extends Iterator {
 
         long key();

@@ -12,7 +12,9 @@ public interface BitSetIterator extends Iterator {
 
     long getBitSetIndex();
 
-    long getOffset();
+    long getSmallestPossibleValue();
+
+    int getBitSetSize();
 
     static BitSetIterator empty() {
         return new Empty();
@@ -40,7 +42,12 @@ public interface BitSetIterator extends Iterator {
         }
 
         @Override
-        public long getOffset() {
+        public long getSmallestPossibleValue() {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public int getBitSetSize() {
             throw new NoSuchElementException();
         }
 

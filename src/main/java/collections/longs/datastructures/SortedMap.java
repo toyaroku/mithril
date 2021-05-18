@@ -13,4 +13,10 @@ public interface SortedMap extends Map {
     EntryIterator ascending();
 
     EntryIterator descending();
+
+    @Override
+    SortedMap copy();
+
+    @Override
+    MutableSortedMap mutableCopy();
 }
