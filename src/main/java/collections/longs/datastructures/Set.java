@@ -1,8 +1,12 @@
 package collections.longs.datastructures;
 
-public interface DataStructure {
+public interface Set {
 
     boolean isEmpty();
 
     int cardinality();
+
+    boolean contains(long element);
+
+    Iterator elements();
 }

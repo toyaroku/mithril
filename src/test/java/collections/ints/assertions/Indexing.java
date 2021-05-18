@@ -7,7 +7,7 @@ import collections.ints.Set;
 import java.util.ArrayList;
 import java.util.List;
 
-import static collections.Collections.noSuchInteger;
+import static collections.Collections.noSuchInt;
 
 public class Indexing{
 
@@ -73,7 +73,7 @@ public class Indexing{
         @Override
         public Assertion hasNoSmallerKey() {
             assertsToExecute.add(Assert.SMALLER_VALUE_NOT_FOUND);
-            expectedValues.add(Collections.noSuchInteger());
+            expectedValues.add(Collections.noSuchInt());
             return this;
         }
 
@@ -87,7 +87,7 @@ public class Indexing{
         @Override
         public Assertion hasNoGreaterKey() {
             assertsToExecute.add(Assert.GREATER_VALUE_NOT_FOUND);
-            expectedValues.add(Collections.noSuchInteger());
+            expectedValues.add(Collections.noSuchInt());
             return this;
         }
 
@@ -115,7 +115,7 @@ public class Indexing{
         SMALLER_VALUE_NOT_FOUND {
             @Override
             <S extends Set<S>> boolean test(S set, int expected, int value) {
-                return Collections.noSuchInteger(set.smaller(value));
+                return Collections.noSuchInt(set.smaller(value));
             }
         },
         GREATER_VALUE_EQUALS {
@@ -127,7 +127,7 @@ public class Indexing{
         GREATER_VALUE_NOT_FOUND {
             @Override
             <S extends Set<S>> boolean test(S set, int expected, int value) {
-                return Collections.noSuchInteger(set.greater(value));
+                return Collections.noSuchInt(set.greater(value));
             }
         };
 

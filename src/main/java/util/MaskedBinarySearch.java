@@ -2,7 +2,7 @@ package util;
 
 import collections.Collections;
 
-import static collections.Collections.noSuchInteger;
+import static collections.Collections.noSuchInt;
 
 public class MaskedBinarySearch {
 
@@ -15,7 +15,7 @@ public class MaskedBinarySearch {
     public int indexOf(long[] array, int length, long key) {
         int index = indexOfOrInverseInsertIndex(array, length, key);
         if (index < 0 || index >= length) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         return index;
     }

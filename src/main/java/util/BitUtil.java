@@ -4,7 +4,7 @@ import collections.Collections;
 
 import java.util.Arrays;
 
-import static collections.Collections.noSuchInteger;
+import static collections.Collections.noSuchInt;
 
 public class BitUtil {
 
@@ -22,11 +22,19 @@ public class BitUtil {
         return (word & (1L << index)) != 0;
     }
 
+    public static boolean containsBitAtIndex(long word, long index) {
+        return (word & (1L << index)) != 0;
+    }
+
     public static boolean containsBitAtIndex(int word, int index) {
         return (word & (1L << index)) != 0;
     }
 
     public static long withBitSetAtIndex(long word, int index) {
+        return word | (1L << index);
+    }
+
+    public static long withBitSetAtIndex(long word, long index) {
         return word | (1L << index);
     }
 
@@ -36,7 +44,7 @@ public class BitUtil {
 
     public static int lastBit(long word) {
         if (word == 0) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         int previousIndexFromEnd = Long.numberOfLeadingZeros(word) + 1;
         return BITS_PER_LONG - previousIndexFromEnd;
@@ -44,7 +52,7 @@ public class BitUtil {
 
     public static int lastBit(int word) {
         if (word == 0) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         int previousIndexFromEnd = Integer.numberOfLeadingZeros(word) + 1;
         return BITS_PER_INT - previousIndexFromEnd;
@@ -52,60 +60,60 @@ public class BitUtil {
 
     public static int firstBit(long word) {
         if (word == 0) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         return Long.numberOfTrailingZeros(word);
     }
 
     public static int firstBit(int word) {
         if (word == 0) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         return Integer.numberOfTrailingZeros(word);
     }
 
     public static int previousSetBitInclusive(long word, int index) {
         if (index < 0) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         long smallerPart = word & (-1L >>> -(index + 1));
         if (smallerPart == 0L) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         return lastBit(smallerPart);
     }
 
     public static int previousSetBitInclusive(int word, int index) {
         if (index < 0) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         int smallerPart = word & (-1 >>> -(index + 1));
         if (smallerPart == 0L) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         return lastBit(smallerPart);
     }
 
     public static int nextSetBitInclusive(long word, int index) {
         if (index >= BITS_PER_LONG) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         long greaterPart = word & (-1L << index);
         int firstSetBitIndex = firstBit(greaterPart);
         if (firstSetBitIndex >= BITS_PER_LONG) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         return firstSetBitIndex;
     }
 
     public static int nextSetBitInclusive(int word, int index) {
         if (index > BITS_PER_INT - 1) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         int greaterPart = word & (-1 << index);
         int firstSetBitIndex = firstBit(greaterPart);
         if (firstSetBitIndex >= BITS_PER_INT) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         return firstSetBitIndex;
     }
@@ -143,6 +151,14 @@ public class BitUtil {
             array[arrayIndex++] =  bitIndex;
         }
 
+        return array;
+    }
+
+    public static long[] toArray(int[] intArray, int length) {
+        long[] array = new long[intArray.length];
+        for (int i = 0; i < length; i++) {
+            array[i] = intArray[i];
+        }
         return array;
     }
 

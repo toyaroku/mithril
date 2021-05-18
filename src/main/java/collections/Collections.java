@@ -5,7 +5,7 @@ public final class Collections {
     private static final int NO_SUCH_ELEMENT_INT = -1;
     private static final long NO_SUCH_ELEMENT_LONG = -1;
 
-    public static int noSuchInteger() {
+    public static int noSuchInt() {
         return NO_SUCH_ELEMENT_INT;
     }
 
@@ -13,7 +13,7 @@ public final class Collections {
         return NO_SUCH_ELEMENT_LONG;
     }
 
-    public static boolean noSuchInteger(int index) {
+    public static boolean noSuchInt(int index) {
         return index == NO_SUCH_ELEMENT_INT;
     }
 

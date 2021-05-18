@@ -2,19 +2,22 @@ package collections.longs.datastructures;
 
 public interface Map {
 
-    int cardinality();
-
-    long getMaxSupportedKey();
-
-    long getMaxSupportedValue();
-
     boolean isEmpty();
 
-    boolean containsKey(long key);
+    int size();
 
-    long getValue(long key);
+    boolean containsKey(long domainElement);
 
-    Iterator ascending();
+    long value(long domainElement);
 
-    Iterator descending();
+    long aggregateValues(long initialValue, Aggregation aggregation);
+
+    EntryIterator definition();
+
+    interface EntryIterator extends Iterator {
+
+        long key();
+
+        long value();
+    }
 }

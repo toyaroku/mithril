@@ -29,3 +29,4 @@ gradlew
 gradlew.bat
 build/
 .DS_STORE
+.attach_pid*

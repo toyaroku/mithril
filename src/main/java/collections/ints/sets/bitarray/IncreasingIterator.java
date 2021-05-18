@@ -4,7 +4,7 @@ import collections.Collections;
 import iterators.ints.Iterator;
 import util.BitUtil;
 
-import static collections.Collections.noSuchInteger;
+import static collections.Collections.noSuchInt;
 
 class IncreasingIterator implements Iterator {
 
@@ -30,20 +30,20 @@ class IncreasingIterator implements Iterator {
             currentBitSet = calculator.extractBitSet(word);
             currentBitIndex = BitUtil.firstBit(currentBitSet);
         } else {
-            currentBitIndex = Collections.noSuchInteger();
+            currentBitIndex = Collections.noSuchInt();
         }
     }
 
     @Override
     public boolean hasNext() {
-        return !Collections.noSuchInteger(currentBitIndex);
+        return !Collections.noSuchInt(currentBitIndex);
     }
 
     @Override
     public int next() {
         int currentElement = currentOffset + currentBitIndex;
         currentBitIndex = BitUtil.nextSetBitInclusive(currentBitSet, currentBitIndex + 1);
-        if (Collections.noSuchInteger(currentBitIndex)) {
+        if (Collections.noSuchInt(currentBitIndex)) {
             if (currentWordIndex < wordsInUse - 1) {
                 long word = words[++currentWordIndex];
                 int address  = calculator.extractMetaData(word);

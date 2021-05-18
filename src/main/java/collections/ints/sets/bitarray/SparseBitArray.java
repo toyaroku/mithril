@@ -8,7 +8,7 @@ import util.MaskedBinarySearch;
 
 import java.util.Arrays;
 
-import static collections.Collections.noSuchInteger;
+import static collections.Collections.noSuchInt;
 
 public class SparseBitArray implements Set<SparseBitArray> {
 
@@ -30,8 +30,8 @@ public class SparseBitArray implements Set<SparseBitArray> {
             lowestAddress = config.extractMetaData(words[0]);
             highestAddress = config.extractMetaData(words[wordsInUse - 1]);
         } else {
-            lowestAddress = Collections.noSuchInteger();
-            highestAddress = Collections.noSuchInteger();
+            lowestAddress = Collections.noSuchInt();
+            highestAddress = Collections.noSuchInt();
         }
     }
 
@@ -69,14 +69,14 @@ public class SparseBitArray implements Set<SparseBitArray> {
     @Override
     public int smallest() {
         return isEmpty()
-            ? Collections.noSuchInteger()
+            ? Collections.noSuchInt()
             :  calculateElement(lowestAddress, BitUtil.firstBit(config.extractBitSet(words[0])));
     }
 
     @Override
     public int greatest() {
         return isEmpty()
-            ? Collections.noSuchInteger()
+            ? Collections.noSuchInt()
             : calculateElement(highestAddress, BitUtil.lastBit(config.extractBitSet(words[wordsInUse - 1])));
     }
 
@@ -87,7 +87,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
     @Override
     public int smaller(int element) {
         if (isEmpty()) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         int address = config.calculateIndexOfContainingBitSet(element);
         long wordWithAddressOnly = config.withMetaData(0L, address);
@@ -97,9 +97,9 @@ public class SparseBitArray implements Set<SparseBitArray> {
             long bitSet = config.extractBitSet(word);
             int indexInWord = config.calculateIndexInBitSet(element);
             int previousIndex = BitUtil.previousSetBitInclusive(bitSet,indexInWord - 1);
-            if (Collections.noSuchInteger(previousIndex)) {
+            if (Collections.noSuchInt(previousIndex)) {
                 if (maybeIndex == 0) {
-                    return Collections.noSuchInteger();
+                    return Collections.noSuchInt();
                 }
                 maybeIndex--;
             } else {
@@ -108,7 +108,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
         } else {
             maybeIndex = -maybeIndex - 2;
             if (maybeIndex == -1) {
-                return Collections.noSuchInteger();
+                return Collections.noSuchInt();
             }
         }
 
@@ -124,7 +124,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
     @Override
     public int greater(int element) {
         if (isEmpty()) {
-            return Collections.noSuchInteger();
+            return Collections.noSuchInt();
         }
         int address = config.calculateIndexOfContainingBitSet(element);
         long wordWithAddressOnly = config.withMetaData(0L, address);
@@ -134,9 +134,9 @@ public class SparseBitArray implements Set<SparseBitArray> {
             long bitSet = config.extractBitSet(word);
             int indexInWord = config.calculateIndexInBitSet(element);
             int nextIndex = BitUtil.nextSetBitInclusive(bitSet, indexInWord + 1);
-            if (Collections.noSuchInteger(nextIndex)) {
+            if (Collections.noSuchInt(nextIndex)) {
                 if (maybeIndex == wordsInUse - 1) {
-                    return Collections.noSuchInteger();
+                    return Collections.noSuchInt();
                 }
                 maybeIndex++;
             } else {
@@ -145,7 +145,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
         } else {
             maybeIndex = -maybeIndex - 1;
             if (maybeIndex == wordsInUse) {
-                return Collections.noSuchInteger();
+                return Collections.noSuchInt();
             }
         }
 
@@ -173,7 +173,7 @@ public class SparseBitArray implements Set<SparseBitArray> {
         }
         long rawAddress = config.withMetaData(0L, address);
         int wordIndex = indexer.indexOf(words, wordsInUse, rawAddress);
-        if (Collections.noSuchInteger(wordIndex)) {
+        if (Collections.noSuchInt(wordIndex)) {
             return false;
         }
         int bitSet = config .extractBitSet(words[wordIndex]);

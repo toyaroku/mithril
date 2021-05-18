@@ -5,7 +5,7 @@ import collections.Collections;
 import java.util.Random;
 import java.util.TreeSet;
 
-import static collections.Collections.noSuchInteger;
+import static collections.Collections.noSuchInt;
 import static util.BitUtil.firstBit;
 import static util.BitUtil.nextSetBitInclusive;
 
@@ -80,7 +80,7 @@ public class SparseIntGenerator {
             long word = clusters[i];
             int[] clusterSet = new int[Long.bitCount(word)];
             int index = 0;
-            for (int j = firstBit(word); !Collections.noSuchInteger(j); j = nextSetBitInclusive(word, j + 1)) {
+            for (int j = firstBit(word); !Collections.noSuchInt(j); j = nextSetBitInclusive(word, j + 1)) {
                 int element = offsetFromStart + j;
                 clusterSet[index++] = element;
             }
