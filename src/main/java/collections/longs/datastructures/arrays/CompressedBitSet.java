@@ -1,10 +1,7 @@
 package collections.longs.datastructures.arrays;
 
-import collections.Collections;
 import collections.longs.datastructures.*;
 import util.BitUtil;
-
-import java.util.Arrays;
 
 import static collections.Collections.noSuchInt;
 import static collections.Collections.noSuchLong;
@@ -71,12 +68,12 @@ public class CompressedBitSet implements MutableBitSet {
 
     @Override
     public BitSetIterator ascending() {
-        return isEmpty() ? BitSetIterator.empty() : new Ascending();
+        return isEmpty() ? BitSetIterator.empty() : new Iterator(Order.ASCENDING);
     }
 
     @Override
     public BitSetIterator descending() {
-        return isEmpty() ? BitSetIterator.empty() : new Descending();
+        return isEmpty() ? BitSetIterator.empty() : new Iterator(Order.DESCENDING);
     }
 
     @Override
@@ -115,80 +112,92 @@ public class CompressedBitSet implements MutableBitSet {
     }
 
     @Override
-    public Iterator elements() {
+    public collections.longs.datastructures.Iterator elements() {
         return ascending();
     }
 
-    // TODO resolve code duplication
-    private class Ascending implements BitSetIterator {
-
-        private Map.EntryIterator entryIterator;
-        private long currentOffset;
-        private long currentBitSet;
-        private int currentBitIndex;
-
-        private Ascending() {
-            entryIterator = bitSets.ascending();
-            entryIterator.next();
-            currentBitSet = entryIterator.value();
-            currentOffset = calculateOffset(entryIterator.key());
-            currentBitIndex = -1;
-        }
-
-        @Override
-        public long currentElement() {
-            return currentOffset + currentBitIndex;
-        }
-
-        @Override
-        public long getBitSet() {
-            return currentBitSet;
-        }
-
-        @Override
-        public long getBitSetIndex() {
-            return entryIterator.key();
-        }
-
-        @Override
-        public long getOffset() {
-            return calculateOffset(entryIterator.key());
-        }
-
-        @Override
-        public boolean hasNext() {
-            return entryIterator.hasNext() || currentBitIndex != BitUtil.lastBit(currentBitSet);
-        }
-
-        @Override
-        public long next() {
-            currentBitIndex = BitUtil.nextSetBitInclusive(currentBitSet, currentBitIndex + 1);
-            if (noSuchInt(currentBitIndex)) {
-                if (entryIterator.hasNext()) {
-                    entryIterator.next();
-                    currentBitSet = entryIterator.value();
-                    currentOffset = calculateOffset(entryIterator.key());
-                    currentBitIndex = BitUtil.firstBit(currentBitSet);
-                }
+    private enum Order {
+        ASCENDING {
+            @Override
+            Map.EntryIterator entryIterator(CompressedSortedMap map) {
+                return map.ascending();
             }
-            return currentElement();
-        }
+
+            @Override
+            int initialBitIndex() {
+                return -1;
+            }
+
+            @Override
+            boolean hasNextBit(long currentBitSet, int currentBitIndex) {
+                return currentBitIndex < BitUtil.lastBit(currentBitSet);
+            }
+
+            @Override
+            int nextBitIndex(long currentBitSet, int currentBitIndex) {
+                return BitUtil.nextSetBitInclusive(currentBitSet, currentBitIndex + 1);
+            }
+
+            @Override
+            int firstBitIndex(long currentBitSet) {
+                return BitUtil.firstBit(currentBitSet);
+            }
+        },
+        DESCENDING {
+            @Override
+            Map.EntryIterator entryIterator(CompressedSortedMap map) {
+                return map.descending();
+            }
+
+            @Override
+            int initialBitIndex() {
+                return BITS_PER_LONG;
+            }
+
+            @Override
+            boolean hasNextBit(long currentBitSet, int currentBitIndex) {
+                return currentBitIndex > BitUtil.firstBit(currentBitSet);
+            }
+
+            @Override
+            int nextBitIndex(long currentBitSet, int currentBitIndex) {
+                return BitUtil.previousSetBitInclusive(currentBitSet, currentBitIndex - 1);
+            }
+
+            @Override
+            int firstBitIndex(long currentBitSet) {
+                return BitUtil.lastBit(currentBitSet);
+            }
+        };
+
+        abstract Map.EntryIterator entryIterator(CompressedSortedMap map);
+
+        abstract int initialBitIndex();
+
+        abstract boolean hasNextBit(long currentBitSet, int currentBitIndex);
+
+        abstract int nextBitIndex(long currentBitSet, int currentBitIndex);
+
+        abstract int firstBitIndex(long currentBitSet);
     }
 
+    private class Iterator implements BitSetIterator {
 
-    private class Descending implements BitSetIterator {
+        private final Order order;
+        private final Map.EntryIterator entryIterator;
 
-        private Map.EntryIterator entryIterator;
         private long currentOffset;
         private long currentBitSet;
         private int currentBitIndex;
 
-        private Descending() {
-            entryIterator = bitSets.descending();
+        private Iterator(Order order) {
+            this.order = order;
+            this.entryIterator = order.entryIterator(bitSets);
+
             entryIterator.next();
             currentBitSet = entryIterator.value();
             currentOffset = calculateOffset(entryIterator.key());
-            currentBitIndex = BITS_PER_LONG;
+            currentBitIndex = order.initialBitIndex();
         }
 
         @Override
@@ -213,19 +222,18 @@ public class CompressedBitSet implements MutableBitSet {
 
         @Override
         public boolean hasNext() {
-            return entryIterator.hasNext() || currentBitIndex != BitUtil.firstBit(currentBitSet);
+            return entryIterator.hasNext() || order.hasNextBit(currentBitSet, currentBitIndex);
         }
 
         @Override
         public long next() {
-            // TODO store shifted long to reduce calculations
-            currentBitIndex = BitUtil.previousSetBitInclusive(currentBitSet, currentBitIndex - 1);
+            currentBitIndex = order.nextBitIndex(currentBitSet, currentBitIndex);
             if (noSuchInt(currentBitIndex)) {
                 if (entryIterator.hasNext()) {
                     entryIterator.next();
                     currentBitSet = entryIterator.value();
                     currentOffset = calculateOffset(entryIterator.key());
-                    currentBitIndex = BitUtil.lastBit(currentBitSet);
+                    currentBitIndex = order.firstBitIndex(currentBitSet);
                 }
             }
             return currentElement();
