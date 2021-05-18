@@ -146,6 +146,10 @@ class CompressedSortedMap implements SortedMap {
             super(array, compressor);
         }
 
+        private Mutable(Mutable map) {
+            super(map);
+        }
+
         @Override
         public void define(long key, long value) {
             int index = findArrayIndex(key);
@@ -178,6 +182,11 @@ class CompressedSortedMap implements SortedMap {
                 long newEntry = compressor.create(key, newValue);
                 array.insert(newEntry, Sorting.asInsertIndex(index));
             }
+        }
+
+        @Override
+        public Mutable copy() {
+            return new Mutable(this);
         }
     }
 

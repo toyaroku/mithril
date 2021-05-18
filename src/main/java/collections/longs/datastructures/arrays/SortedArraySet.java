@@ -10,6 +10,10 @@ public class SortedArraySet implements SortedSet {
         this.array = array;
     }
 
+    private SortedArraySet(SortedArraySet original) {
+        this(original.array.copy());
+    }
+
     public static SortedArraySet empty() {
         return new SortedArraySet(ResizableArray.empty());
     }
@@ -80,6 +84,10 @@ public class SortedArraySet implements SortedSet {
             super(array);
         }
 
+        private Mutable(Mutable original) {
+            super(original);
+        }
+
         @Override
         public void add(long element) {
             int index = array.find(element);
@@ -94,6 +102,11 @@ public class SortedArraySet implements SortedSet {
             if (Sorting.isPresent(index)) {
                 array.remove(index);
             }
+        }
+
+        @Override
+        public Mutable copy() {
+            return new Mutable(this);
         }
     }
 }

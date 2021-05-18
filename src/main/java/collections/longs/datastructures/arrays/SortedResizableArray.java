@@ -13,7 +13,7 @@ public class SortedResizableArray implements SortedList {
     }
 
     private SortedResizableArray(SortedResizableArray original) {
-        this(original.array.mutableCopy());
+        this(original.array.copy());
     }
 
     public static SortedResizableArray.Mutable empty() {

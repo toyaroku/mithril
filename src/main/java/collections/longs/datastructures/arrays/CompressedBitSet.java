@@ -261,6 +261,10 @@ public class CompressedBitSet implements BitSet {
             super(bitSets, compressor, bitSetSize);
         }
 
+        private Mutable(Mutable original) {
+            super(original);
+        }
+
         @Override
         public void add(long element) {
             long bitSetIndex = calculateBitSetIndex(element);
@@ -273,6 +277,11 @@ public class CompressedBitSet implements BitSet {
         public void remove(long element) {
             long bitSetIndex = calculateBitSetIndex(element);
             bitSets.remove(bitSetIndex);
+        }
+
+        @Override
+        public Mutable copy() {
+            return new Mutable(this);
         }
     }
 
