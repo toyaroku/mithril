@@ -1,6 +1,6 @@
 package collections.longs.datastructures.arrays;
 
-import collections.longs.datastructures.Update;
+import collections.longs.datastructures.maps.Update;
 
 import java.util.Arrays;
 

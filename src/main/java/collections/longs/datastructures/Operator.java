@@ -1,6 +1,6 @@
 package collections.longs.datastructures;
 
-import collections.longs.datastructures.Set;
+import collections.longs.datastructures.sets.Set;
 
 public interface Operator<S extends Set> {
 

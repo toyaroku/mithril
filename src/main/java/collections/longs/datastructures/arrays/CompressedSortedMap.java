@@ -1,10 +1,16 @@
 package collections.longs.datastructures.arrays;
 
-import collections.longs.datastructures.*;
+import collections.longs.datastructures.iterators.*;
+import collections.longs.datastructures.lists.ListIterator;
+import collections.longs.datastructures.lists.ListView;
+import collections.longs.datastructures.lists.SortedListIterator;
+import collections.longs.datastructures.lists.SortedListView;
+import collections.longs.datastructures.maps.*;
+import collections.longs.datastructures.sorting.Sorting;
 
 import static collections.Collections.noSuchLong;
 
-class CompressedSortedMap implements SortedMap {
+public class CompressedSortedMap implements SortedMap {
 
     private final EntryCompressor compressor;
     private final SortedResizableArray.Mutable array;
@@ -22,6 +28,18 @@ class CompressedSortedMap implements SortedMap {
     private CompressedSortedMap(CompressedSortedMap original) {
         this.array = original.array.copy();
         this.compressor = original.compressor;
+    }
+
+    public static Mutable fromMapView(MapView view, EntryCompressor compressor) {
+        ViewAdapter viewAdapter = new ViewAdapter(view, compressor);
+        SortedResizableArray.Mutable array = SortedResizableArray.fromListView(viewAdapter);
+        return new CompressedSortedMap(array, compressor).asMutable();
+    }
+
+    public static Mutable fromSortedView(SortedMapView view, EntryCompressor compressor) {
+        SortedViewAdapter sortedViewAdapter = new SortedViewAdapter(view, compressor);
+        SortedResizableArray.Mutable array = SortedResizableArray.fromSortedView(sortedViewAdapter);
+        return new CompressedSortedMap(array, compressor).asMutable();
     }
 
     public static Mutable empty(EntryCompressor compressor) {
@@ -68,8 +86,8 @@ class CompressedSortedMap implements SortedMap {
     }
 
     @Override
-    public EntryIterator definition() {
-        return ascending();
+    public SortedMapView definition() {
+        return create(array.beforeSmallest());
     }
 
     private int findArrayIndex(long key) {
@@ -117,13 +135,17 @@ class CompressedSortedMap implements SortedMap {
     }
 
     @Override
-    public EntryIterator ascending() {
-        return new It(array.ascending());
+    public CompressedSortedMapIterator beforeSmallestKey() {
+        return create(array.beforeSmallest());
     }
 
     @Override
-    public EntryIterator descending() {
-        return new It(array.descending());
+    public CompressedSortedMapIterator afterGreatestKey() {
+        return create(array.afterGreatest());
+    }
+
+    private CompressedSortedMapIterator create(SortedListIterator iterator) {
+        return SortedMapIterators.fromCompressedSortedList(iterator, compressor);
     }
 
     @Override
@@ -190,56 +212,98 @@ class CompressedSortedMap implements SortedMap {
         }
     }
 
-    private class It implements EntryIterator {
-
-        private final Iterator iterator;
-
-        private long key;
-        private long value;
-
-        private It(Iterator iterator) {
-            this.iterator = iterator;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public long next() {
-            long entry = iterator.next();
-            key = compressor.key(entry);
-            value = compressor.value(entry);
-            return key;
-        }
-
-        @Override
-        public long key() {
-            return key;
-        }
-
-        @Override
-        public long value() {
-            return value;
-        }
-    }
-
     @Override
     public String toString() {
         int maxSize = 20;
         StringBuilder stringBuilder = new StringBuilder("[ ");
-        Iterator iterator = array.elements();
-        for (int i = 0; i < maxSize && iterator.hasNext(); i++) {
+        ListIterator iterator = array.beforeFirstIndex();
+        for (int i = 0; i < maxSize && iterator.hasNextIndex(); i++) {
             if (i > 0) {
                 stringBuilder.append(", ");
             }
-            long element = iterator.next();
+            iterator.iterateNextIndex();
+            long element = iterator.element();
             stringBuilder.append(String.format("(%d -> %d)", compressor.key(element), compressor.value(element)));
         }
-        if (iterator.hasNext()) {
+        if (iterator.hasNextIndex()) {
             stringBuilder.append("... and more");
         }
         return stringBuilder.append(" ]").toString();
+    }
+
+    private static class SortedViewAdapter implements SortedListView  {
+
+        private final SortedMapView mapView;
+        private final EntryCompressor entryCompressor;
+
+        private int index;
+        private long entry;
+
+        private SortedViewAdapter(SortedMapView mapView, EntryCompressor entryCompressor) {
+            this.mapView = mapView;
+            this.entryCompressor = entryCompressor;
+            this.index = -1;
+            this.entry = 0L;
+        }
+
+        @Override
+        public long element() {
+            return entry;
+        }
+
+        @Override
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public boolean hasGreater() {
+            return mapView.hasGreater();
+        }
+
+        @Override
+        public void iterateGreater() {
+            mapView.iterateGreater();
+            entry = entryCompressor.create(mapView.key(), mapView.value());
+            index++;
+        }
+    }
+
+    private static class ViewAdapter implements ListView {
+
+        private final MapView mapView;
+        private final EntryCompressor entryCompressor;
+
+        private int index;
+        private long entry;
+
+        private ViewAdapter(MapView mapView, EntryCompressor entryCompressor) {
+            this.mapView = mapView;
+            this.entryCompressor = entryCompressor;
+            this.index = -1;
+            this.entry = 0L;
+        }
+
+        @Override
+        public long element() {
+            return entry;
+        }
+
+        @Override
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public boolean hasNextIndex() {
+            return mapView.hasNextEntry();
+        }
+
+        @Override
+        public void iterateNextIndex() {
+            mapView.iterateNextEntry();
+            entry = entryCompressor.create(mapView.key(), mapView.value());
+            index++;
+        }
     }
 }

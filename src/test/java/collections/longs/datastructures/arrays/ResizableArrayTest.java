@@ -1,6 +1,6 @@
 package collections.longs.datastructures.arrays;
 
-import collections.longs.datastructures.MutableList;
+import collections.longs.datastructures.lists.MutableList;
 import org.junit.jupiter.api.Test;
 
 

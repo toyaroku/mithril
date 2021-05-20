@@ -1,12 +1,14 @@
 package collections.longs.datastructures.arrays;
 
-import collections.longs.datastructures.*;
+import collections.longs.datastructures.lists.*;
+import collections.longs.datastructures.maps.Update;
+import collections.longs.datastructures.sorting.Sorting;
 
 import java.util.Arrays;
 
 import static collections.Collections.noSuchLong;
 
-public class ResizableArray implements UnsortedList{
+public class ResizableArray implements List {
 
     private static final int MIN_SIZE = 10;
 
@@ -22,16 +24,23 @@ public class ResizableArray implements UnsortedList{
         this(Arrays.copyOf(original.elements, original.length), original.length);
     }
 
-    public static ResizableArray.Mutable empty() {
-        return new ResizableArray(new long[0], 0).asMutable();
+    public static Mutable empty() {
+        return new ResizableArray(new long[0], MIN_SIZE).asMutable();
     }
 
-    public static ResizableArray.Mutable of(long[] elements, int length) {
-        return new ResizableArray(elements, length).asMutable();
-    }
-
-    public static ResizableArray.Mutable of(long... elements) {
-        return new ResizableArray(elements, elements.length).asMutable();
+    public static Mutable fromView(ListView view, long defaultValue) {
+        Mutable array = empty();
+        while (view.hasNextIndex()) {
+            view.iterateNextIndex();
+            int index = view.index();
+            int gap = index - array.length();
+            if (gap > 0) {
+                array.addMulti(defaultValue, gap);
+            }
+            long element = view.element();
+            array.add(element);
+        }
+        return array;
     }
 
     @Override
@@ -55,8 +64,17 @@ public class ResizableArray implements UnsortedList{
     }
 
     @Override
-    public Iterator elements() {
-        return byIncreasingIndex();
+    public ListIterator beforeFirstIndex() {
+        return ArrayListIterator.beforeFirstIndex(elements, length);
+    }
+
+    @Override
+    public ListIterator afterLastIndex() {
+        return ArrayListIterator.afterLastIndex(elements, length);
+    }
+
+    public ListIterator fromIndex(int index) {
+        return ArrayListIterator.fromIndex(elements, length, index);
     }
 
     @Override
@@ -79,16 +97,7 @@ public class ResizableArray implements UnsortedList{
         return isEmpty() ? noSuchLong() : elements[length - 1];
     }
 
-    @Override
-    public Iterator byIncreasingIndex() {
-        return new It(Order.INCREASING_INDEX);
-    }
-
-    @Override
-    public Iterator byDecreasingIndex() {
-        return new It(Order.DECREASING_INDEX);
-    }
-
+    // TODO avoid this by making Mutable static and pass immutable collection
     private Mutable asMutable() {
         return new Mutable(elements, length);
     }
@@ -108,6 +117,12 @@ public class ResizableArray implements UnsortedList{
         public void add(long element) {
             expandIfRequired();
             elements[length++] = element;
+        }
+
+        public void addMulti(long element, int timesToAdd) {
+            expandIfRequired(timesToAdd);
+            Arrays.fill(elements, length, length + timesToAdd, element);
+            length += timesToAdd;
         }
 
         @Override
@@ -138,14 +153,18 @@ public class ResizableArray implements UnsortedList{
             Array.reverse(elements, fromIncl, toExcl);
         }
 
-        private void expandIfRequired() {
-            if (requiresExpansion()) {
+        private void expandIfRequired(int elementsToAdd) {
+            if (requiresExpansion(elementsToAdd)) {
                 elements = Arrays.copyOf(elements, Math.max(MIN_SIZE, length << 1));
             }
         }
 
-        private boolean requiresExpansion() {
-            return length >= elements.length;
+        private void expandIfRequired() {
+            expandIfRequired(1);
+        }
+
+        private boolean requiresExpansion(int elementsToAdd) {
+            return length + elementsToAdd > elements.length;
         }
 
         @Override
@@ -175,69 +194,6 @@ public class ResizableArray implements UnsortedList{
     // TODO this has to go
     long[] rawElements() {
         return elements;
-    }
-
-    private enum Order {
-        INCREASING_INDEX {
-            @Override
-            boolean hasNextIndex(int currentIndex, int length) {
-                return currentIndex < length - 1;
-            }
-
-            @Override
-            int nextIndex(int currentIndex) {
-                return currentIndex + 1;
-            }
-
-            @Override
-            public int initialIndex(int length) {
-                return -1;
-            }
-        },
-        DECREASING_INDEX {
-            @Override
-            boolean hasNextIndex(int currentIndex, int length) {
-                return currentIndex > 0;
-            }
-
-            @Override
-            int nextIndex(int currentIndex) {
-                return currentIndex - 1;
-            }
-
-            @Override
-            public int initialIndex(int length) {
-                return length;
-            }
-        };
-
-        abstract boolean hasNextIndex(int currentIndex, int length);
-
-        abstract int nextIndex(int currentIndex);
-
-        public abstract int initialIndex(int length);
-    }
-
-    private class It implements  Iterator {
-
-        private final Order order;
-        private int currentIndex;
-
-        private It(Order order) {
-            this.order = order;
-            this.currentIndex = order.initialIndex(length);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return order.hasNextIndex(currentIndex, length);
-        }
-
-        @Override
-        public long next() {
-            currentIndex = order.nextIndex(currentIndex);
-            return elements[currentIndex];
-        }
     }
 
     @Override

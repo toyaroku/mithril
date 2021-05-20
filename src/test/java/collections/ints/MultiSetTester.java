@@ -2,8 +2,8 @@ package collections.ints;
 
 import collections.ints.assertions.SetFactory;
 import collections.ints.assertions.Statement;
-import collections.longs.datastructures.BitSetIterator;
-import collections.longs.datastructures.EntryCompressor;
+import collections.longs.datastructures.bitsets.BitSetIterator;
+import collections.longs.datastructures.maps.EntryCompressor;
 import collections.longs.datastructures.arrays.CompressedBitSet;
 import iterators.ints.Iterator;
 
@@ -95,11 +95,11 @@ public class MultiSetTester {
         public Iterator increasing() {
             return new Iterator() {
 
-                private BitSetIterator it = bitSet.ascending();
+                private BitSetIterator it = bitSet.beforeSmallest();
 
                 @Override
                 public boolean hasNext() {
-                    return it.hasNext();
+                    return it.isEmpty();
                 }
 
                 @Override
@@ -114,11 +114,11 @@ public class MultiSetTester {
         public Iterator decreasing() {
             return new Iterator() {
 
-                private final BitSetIterator it = bitSet.descending();
+                private final BitSetIterator it = bitSet.afterGreatest();
 
                 @Override
                 public boolean hasNext() {
-                    return it.hasNext();
+                    return it.isEmpty();
                 }
 
                 @Override

@@ -1,11 +1,12 @@
 package collections.longs.datastructures.bitsets;
 
-import collections.longs.datastructures.BitSet;
-import collections.longs.datastructures.Iterator;
+public interface BitSetIterator extends BitSetView {
 
-public class BitSetIterator {
+    boolean hasNextBitSet();
 
-    public BitSetIterator (Iterator words) {
+    void iterateNextBitSet();
 
-    }
+    boolean hasPreviousBitSet();
+
+    void iteratePreviousBitSet();
 }

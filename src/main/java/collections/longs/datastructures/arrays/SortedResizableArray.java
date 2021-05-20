@@ -1,6 +1,8 @@
 package collections.longs.datastructures.arrays;
 
-import collections.longs.datastructures.*;
+import collections.longs.datastructures.lists.*;
+import collections.longs.datastructures.maps.Update;
+import collections.longs.datastructures.sorting.Sorting;
 
 public class SortedResizableArray implements SortedList {
 
@@ -16,13 +18,22 @@ public class SortedResizableArray implements SortedList {
         this(original.array.copy());
     }
 
-    public static SortedResizableArray.Mutable empty() {
+    public static Mutable empty() {
         return new SortedResizableArray(ResizableArray.Mutable.empty()).asMutable();
     }
 
-    public static SortedResizableArray.Mutable of(long... elements) {
-        return new SortedResizableArray(ResizableArray.Mutable.of(elements)).asMutable();
+    public static Mutable fromSortedView(SortedListView view) {
+        ListViewAdapter assumedSortedListView = new ListViewAdapter(view);
+        SortedResizableArray.Mutable array = SortedResizableArray.fromListView(assumedSortedListView);
+        return new SortedResizableArray(array).asMutable();
     }
+
+    public static Mutable fromListView(ListView view) {
+        Mutable array = SortedResizableArray.fromListView(view);
+        array.sort();
+        return new SortedResizableArray(array).asMutable();
+    }
+
 
     @Override
     public boolean isEmpty() {
@@ -45,8 +56,13 @@ public class SortedResizableArray implements SortedList {
     }
 
     @Override
-    public Iterator elements() {
-        return array.elements();
+    public ListIterator beforeFirstIndex() {
+        return array.beforeFirstIndex();
+    }
+
+    @Override
+    public ListIterator afterLastIndex() {
+        return array.afterLastIndex();
     }
 
     private boolean conflictsWithPrev(int index, long newElement) {
@@ -68,13 +84,23 @@ public class SortedResizableArray implements SortedList {
     }
 
     @Override
-    public Iterator ascending() {
-        return array.byIncreasingIndex();
+    public long first() {
+        return array.first();
     }
 
     @Override
-    public Iterator descending() {
-        return array.byDecreasingIndex();
+    public long last() {
+        return array.last();
+    }
+
+    @Override
+    public SortedListIterator beforeSmallest() {
+        return Iterator.beforeSmallest(array);
+    }
+
+    @Override
+    public SortedListIterator afterGreatest() {
+        return Iterator.afterGreatest(array);
     }
 
     @Override
@@ -83,7 +109,7 @@ public class SortedResizableArray implements SortedList {
     }
 
     @Override
-    public MutableSortedList mutableCopy() {
+    public Mutable mutableCopy() {
         return null;
     }
 
@@ -140,6 +166,110 @@ public class SortedResizableArray implements SortedList {
         @Override
         public Mutable copy() {
             return new Mutable(array.copy());
+        }
+
+        public void sort() {
+            array.sort();
+        }
+    }
+
+    private static class Iterator implements SortedListIterator {
+
+        private final ListIterator iterator;
+
+        private Iterator(ListIterator iterator) {
+            this.iterator = iterator;
+        }
+
+        private static Iterator beforeSmallest(ResizableArray array) {
+            return new Iterator(array.beforeFirstIndex());
+        }
+
+        private static Iterator afterGreatest(ResizableArray array) {
+            return new Iterator(array.afterLastIndex());
+        }
+
+        private static Iterator fromIndex(ResizableArray array, int index) {
+            return new Iterator(array.fromIndex(index));
+        }
+
+        @Override
+        public long element() {
+            return iterator.element();
+        }
+
+        @Override
+        public boolean hasGreater() {
+            return iterator.hasNextIndex();
+        }
+
+        @Override
+        public void iterateGreater() {
+            iterator.iterateNextIndex();
+        }
+
+        @Override
+        public boolean hasSmaller() {
+            return iterator.hasPreviousIndex();
+        }
+
+        @Override
+        public void iterateSmaller() {
+            iterator.iteratePreviousIndex();
+        }
+
+        @Override
+        public boolean hasPreviousIndex() {
+            return iterator.hasPreviousIndex();
+        }
+
+        @Override
+        public void iteratePreviousIndex() {
+            iterator.iteratePreviousIndex();
+        }
+
+        @Override
+        public boolean hasNextIndex() {
+            return iterator.hasNextIndex();
+        }
+
+        @Override
+        public void iterateNextIndex() {
+            iterator.iterateNextIndex();
+        }
+
+        @Override
+        public int index() {
+            return iterator.index();
+        }
+    }
+
+    private static class ListViewAdapter implements ListView {
+
+        private final SortedListView view;
+
+        private ListViewAdapter(SortedListView view) {
+            this.view = view;
+        }
+
+        @Override
+        public long element() {
+            return view.element();
+        }
+
+        @Override
+        public boolean hasNextIndex() {
+            return view.hasGreater();
+        }
+
+        @Override
+        public void iterateNextIndex() {
+            view.iterateGreater();
+        }
+
+        @Override
+        public int index() {
+            return view.index();
         }
     }
 }
